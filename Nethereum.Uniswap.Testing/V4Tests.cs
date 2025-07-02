@@ -51,7 +51,7 @@ namespace Nethereum.Uniswap.Core.Tests
         public async Task ShouldQuoteAndSwapPOLForERC20()
         {
             //https://chainlist.org/chain/1301
-            var url = "https://polygon-mainnet.infura.io/v3/627db106041c4d51951098854dfdba79";
+            var url = "";
             var privateKey = "";
             var web3 = new Web3.Web3(new Account(privateKey), url);
             var poolManager = new PoolManagerService(web3, UniswapAddresses.PolygonPoolManagerV4);
@@ -133,7 +133,7 @@ namespace Nethereum.Uniswap.Core.Tests
         [Fact]
         public async Task ShouldQuoteAndSwapPOLForERC20Out()
         {
-            var url = "https://polygon-mainnet.infura.io/v3/627db106041c4d51951098854dfdba79";
+            var url = "";
             var privateKey = "";
             var web3 = new Web3.Web3(new Account(privateKey), url);
 
@@ -244,7 +244,7 @@ namespace Nethereum.Uniswap.Core.Tests
         [Fact]
         public async Task ShouldQuoteAndSwapUSDTToPOL()
         {
-            var url = "https://polygon-mainnet.infura.io/v3/627db106041c4d51951098854dfdba79";
+            var url = "";
             var privateKey = "";
             var web3 = new Web3.Web3(new Account(privateKey), url);
             var ethKey = new EthECKey(privateKey);
