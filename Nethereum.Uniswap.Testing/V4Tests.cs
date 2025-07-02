@@ -52,7 +52,7 @@ namespace Nethereum.Uniswap.Core.Tests
         {
             //https://chainlist.org/chain/1301
             var url = "https://polygon-mainnet.infura.io/v3/627db106041c4d51951098854dfdba79";
-            var privateKey = "0xdcb1b8fe4ba38bd1053619c99bb5c27078b9a18d3ac59708baa65cadb6a2c394";
+            var privateKey = "";
             var web3 = new Web3.Web3(new Account(privateKey), url);
             var poolManager = new PoolManagerService(web3, UniswapAddresses.PolygonPoolManagerV4);
 
@@ -134,7 +134,7 @@ namespace Nethereum.Uniswap.Core.Tests
         public async Task ShouldQuoteAndSwapPOLForERC20Out()
         {
             var url = "https://polygon-mainnet.infura.io/v3/627db106041c4d51951098854dfdba79";
-            var privateKey = "0xdcb1b8fe4ba38bd1053619c99bb5c27078b9a18d3ac59708baa65cadb6a2c394";
+            var privateKey = "";
             var web3 = new Web3.Web3(new Account(privateKey), url);
 
             var wmatic = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270";
@@ -245,7 +245,7 @@ namespace Nethereum.Uniswap.Core.Tests
         public async Task ShouldQuoteAndSwapUSDTToPOL()
         {
             var url = "https://polygon-mainnet.infura.io/v3/627db106041c4d51951098854dfdba79";
-            var privateKey = "0xdcb1b8fe4ba38bd1053619c99bb5c27078b9a18d3ac59708baa65cadb6a2c394";
+            var privateKey = "";
             var web3 = new Web3.Web3(new Account(privateKey), url);
             var ethKey = new EthECKey(privateKey);
             var walletAddress = web3.TransactionManager.Account.Address;
