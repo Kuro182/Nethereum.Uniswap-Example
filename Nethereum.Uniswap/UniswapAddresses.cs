@@ -63,6 +63,7 @@
         public static string PolygonQuoterV4 = "0xb3d5c3dfc3a7aebff71895a7191796bffc2c81b9";
         public static string PolygonStateViewV4 = "0x5ea1bd7974c8a611cbab0bdcafcb1d9cc9b3ba5a";
         public static string PolygonUniversalRouter = "0x1095692a6237d83c6a72f3f5efedb9a670c49223";
+        public static string PolygonPermitV4 = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 
         public static string AvalanchePoolManagerV4 = "0x06380c0e0912312b5150364b9dc4542ba0dbbc85";
         public static string AvalanchePositionDescriptorV4 = "0x2b1aed9445b05ac1a3b203eccc1e25dd9351f0a9";
