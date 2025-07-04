@@ -40,6 +40,15 @@ namespace Nethereum.Uniswap.Core.Tests
         private V4QuoterService v4Quoter = new V4QuoterService(web3, UniswapAddresses.PolygonQuoterV4);
         private UniversalRouterService universalRouter = new UniversalRouterService(web3, UniswapAddresses.PolygonUniversalRouter);
 
+        private static UniversalRouter.V4Actions.PoolKey actionPoolKey = new()
+        {
+            Currency0 = "0x0000000000000000000000000000000000000000",
+            Currency1 = usdt,
+            Fee = 500,
+            TickSpacing = 10,
+            Hooks = "0x0000000000000000000000000000000000000000"
+        };
+
         public V4Tests(ITestOutputHelper output)
         {
             _output = output;
@@ -108,6 +117,80 @@ namespace Nethereum.Uniswap.Core.Tests
         }
 
         [Fact]
+        public async Task ShouldQuoteAndSwapExactOutPOLForERC20()
+        {
+            var pool = new PoolKey()
+            {
+                Currency0 = AddressUtil.ZERO_ADDRESS,
+                Currency1 = usdt,
+                Fee = 500,
+                TickSpacing = 10,
+                Hooks = "0x0000000000000000000000000000000000000000"
+            };
+
+            var pathKeys = V4PathEncoder.EncodeMultihopExactInPath(new List<PoolKey> { pool }, usdt);
+
+            var amountIn = Web3.Web3.Convert.ToWei(0.1, 6);
+
+            var quoteExactParams = new QuoteExactParams()
+            {
+                Path = pathKeys,
+                ExactAmount = amountIn,
+                ExactCurrency = usdt,
+
+            };
+
+            var quote = await v4Quoter.QuoteExactInputQueryAsync(quoteExactParams);
+            var quoteAmount = quote.AmountOut; //usdc 6 decimals
+
+
+            var v4ActionBuilder = new UniversalRouterV4ActionsBuilder();
+
+            //var swapExactInSingle = new SwapExactIn()
+            //{
+            //    AmountIn = amountIn,
+            //    AmountOutMinimum = quote.AmountOut,
+            //    CurrencyIn = AddressUtil.ZERO_ADDRESS,
+            //    Path = pathKeys.MapToActionV4(),
+            //};
+
+            var slippageAdjustedAmount = quoteAmount + (quoteAmount / 200); // 0.5%
+
+            var swapExactOutSingle = new SwapExactOutSingle()
+            {
+                PoolKey = actionPoolKey,
+                AmountOut = amountIn,
+                AmountInMaximum = slippageAdjustedAmount,
+                ZeroForOne = true,
+                HookData = new byte[] { 0x00 } // No hooks in this example
+            };
+
+            var settleAllAction = new SettleAll()
+            {
+                Currency = AddressUtil.ZERO_ADDRESS,
+                Amount = slippageAdjustedAmount
+            };
+
+            var takeAll = new TakeAll()
+            {
+                Currency = usdt,
+                MinAmount = amountIn
+            };
+
+            v4ActionBuilder.AddCommand(swapExactOutSingle);
+            v4ActionBuilder.AddCommand(settleAllAction);
+            v4ActionBuilder.AddCommand(takeAll);
+
+            var routerBuilder = new UniversalRouterBuilder();
+            routerBuilder.AddCommand(v4ActionBuilder.GetV4SwapCommand());
+
+            var executeFunction = routerBuilder.GetExecuteFunction(slippageAdjustedAmount);
+
+            var receipt = await universalRouter.ExecuteRequestAndWaitForReceiptAsync(executeFunction);
+
+        }
+
+        [Fact]
         public async Task ShouldQuoteAndSwapUSDTToPOL()
         {
             var quoterPoolKey = new PoolKey()
@@ -150,14 +233,7 @@ namespace Nethereum.Uniswap.Core.Tests
 
             var v4ActionBuilder = new UniversalRouterV4ActionsBuilder();
 
-            UniversalRouter.V4Actions.PoolKey actionPoolKey = new()
-            {
-                Currency0 = "0x0000000000000000000000000000000000000000",
-                Currency1 = usdt,
-                Fee = 500,
-                TickSpacing = 10,
-                Hooks = "0x0000000000000000000000000000000000000000"
-            };
+            
 
             var swapExactInSingle = new SwapExactInSingle()
             {
